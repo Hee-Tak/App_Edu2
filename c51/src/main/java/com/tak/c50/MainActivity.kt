@@ -80,4 +80,6 @@ class MainActivity : AppCompatActivity() {
  * - RECEIVE_SMS : SMS 수신
  * - RECEIVE_BOOT_COMPLETED : 부팅 완료시 실행
  * - VIBRATE : 진동 울리기
+ *
+ *
  */
