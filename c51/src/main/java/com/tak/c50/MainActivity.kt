@@ -81,5 +81,6 @@ class MainActivity : AppCompatActivity() {
  * - RECEIVE_BOOT_COMPLETED : 부팅 완료시 실행
  * - VIBRATE : 진동 울리기
  *
- *
+ * <<전반적으로 액세스 권한 관련 이야기 인듯>>
+ *     API 23 버전부터는 허가제로 바뀌었다고 함. (생각해보니까 그러네, 언제부턴가 마이크 카메라 이런거 허가해야 쓸수있었음)
  */
