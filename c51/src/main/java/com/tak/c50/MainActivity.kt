@@ -1,12 +1,63 @@
 package com.tak.c50
 
+import android.Manifest
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        //test2..........
+        val requestPermissionsLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) {
+            if(it){
+                Toast.makeText(this, "granted...", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "denied...", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
+
+        val status = ContextCompat.checkSelfPermission(
+            this,
+            "android.permission.ACCESS_FINE_LOCATION"
+        )
+        if(status == PackageManager.PERMISSION_GRANTED){
+            Toast.makeText(this, "granted...", Toast.LENGTH_SHORT).show()
+        } else {
+            //test1...
+//            ActivityCompat.requestPermissions(
+//                this,
+//                arrayOf<String>("android.permission.ACCESS_FINE_LOCATION"),
+//                100
+//            )
+
+            //test2....
+            requestPermissionsLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION) //Manifest 이걸 Android Manifest 로 잡아야됨. 작성 과정에서.
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            Toast.makeText(this, "granted...", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "denied...", Toast.LENGTH_SHORT).show()
+        }
     }
 }
 
@@ -83,6 +134,72 @@ class MainActivity : AppCompatActivity() {
  *
  * <<전반적으로 액세스 권한 관련 이야기 인듯>>
  *     API 23 버전부터는 허가제로 바뀌었다고 함. (생각해보니까 그러네, 언제부턴가 마이크 카메라 이런거 허가해야 쓸수있었음)
+ *
+ *
+ */
+
+
+/**
+ * [permission check]
+ *
+ * permission 이 유저가 체크할 수 있는거기 때문에 이런거 고려해서 프로그램 짜야하며
+ * 이게 뭐 코드에서 enable 로 조정해서 프로그램작성하고 그런게 안됨. 유저만 건들수 있는거기때문에
+ *
+ * 퍼미션 체크는 checkSelfPermission() 함수 이용
+ * 결과 값은 상수로 전달
+ * PackageManager.PERMISSION_GRANTED : 퍼미션이 허락된 경우
+ * PackageManager.PERMISSION_DENIED : 퍼미션이 거부된 경우
+ *
+ * <sample code>
+ *     val status = ContextCompat.checkSelfPermission(this, "android.permission.ACCESS_FINE_LOCATION")
+ *     if(status = PackageManager.PERMISSION_GRANTED) {
+ *          Log.d("kkang", "permission granted")
+ *     } else {
+ *          Log.d("kkang", "permission denied")
+ *     }
+ *
+ *
+ */
+
+
+/**
+ * [permission request]
+ *
+ * <requestPermission() 방법>
+ *
+ * ActivityCompat.requestPermissions(this, arrayOf<String>("android.permission.ACCESS_FINE_LOCATION"), 100)
+ *
+ * override fun onRequestPermissionsResult(
+ *      requestCode: Int,
+ *      permissions: Array<out String>,
+ *      grantResults: IntArray
+ * ) {
+ *      super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+ *      if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+ *          Toast.makeText(this, "permission granted", Toast.LENGTH_SHORT).show()
+ *      } else {
+ *          Toast.makeText(this, "permission denied", Toast.LENGTH_SHORT).show()
+ *      }
+ *  }
+ *
+ *
+ *
+ *
+ *
+ *  <registerForActivityResult() 방법>
+ *
+ *  val requestPermissionLauncher = registerForActivityResult(
+ *      ActivityResultContracts.RequestPermission()
+ *  ) { isGranted ->
+ *      if(isGranted) {
+ *          Toast.makeText(this, "permission granted2", Toast.LENGTH_SHORT).show()
+ *      } else {
+ *          Toast.makeText(this, "permission denied2", Toast.LENGTH_SHORT).show()
+ *      }
+ *  }
+ *
+ *  requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+ *
  *
  *
  */
