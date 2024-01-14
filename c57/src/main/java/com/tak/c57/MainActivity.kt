@@ -31,4 +31,6 @@ class MainActivity : AppCompatActivity() {
  *
  *      val idPreference: EditTextPreference? = findPreference("id")
  *      idPreference?.isVisible = true
+ *
+ *
  */
