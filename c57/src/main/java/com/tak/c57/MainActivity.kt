@@ -32,5 +32,35 @@ class MainActivity : AppCompatActivity() {
  *      val idPreference: EditTextPreference? = findPreference("id")
  *      idPreference?.isVisible = true
  *
+ * - <EditTextPreference>, <ListPreference> 에 의한 설정한 값 화면에 출력
+ * - SimpleSummaryProvider 이용
+ *      soundPreference!!.setSummaryProvider(ListPreference.SimpleSummaryProvider.getInstance());
+ *
+ * - SummaryProvider 의 하위 클래스를 만들어 코드에서 원하는 대로 summary 가 지정 가능
+ *      idPreference?.summaryProvider =
+ *          Preference.SummaryProvider<EditTextPreference> { preference ->
+ *              val text = preferece.text
+ *              if(TextUtils.isEmpty(text)) {
+ *                  "설정이 되지 않았습니다."
+ *              } else {
+ *                  "설정된 ID 값은 : $text 입니다."
+ *              }
+ *          }
+ *
+ * - 이벤트 처리가 필요하다면 setOnPreferenceClickListener() 을 이용해 이벤트 핸들러를 지정
+ *      idPreference?.setOnPreferenceClickListener {
+ *          true
+ *      }
+ *
+ * - 유저가 설정을 변경한 순간을 감지해 변경한 값을 이용해야 하는 경우
+ * - Preference.OnPreferenceChangeListener 을 이용하는 방법은 각 Preference 객체에 적용
+ * - SharedPreferences.OnSharedPreferenceChangeListener 은 모든 설정 객체의 변경을 하나의 이벤트 핸들러에서 감지하기 위한 방법
+ *      idPreference?.setOnPreferenceChangeListener { preference, newValue ->
+ *          Log.d("kkang", "preference key : ${preference.key}, newValue : $newValue ")
+ *          true
+ *      }
+ *
+ *
+ *
  *
  */
