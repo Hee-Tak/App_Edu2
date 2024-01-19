@@ -9,3 +9,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
     }
 }
+
+/**
+ * 바빠서 잠시 보류;;
+ */
