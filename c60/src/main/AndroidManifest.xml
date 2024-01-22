@@ -9,6 +9,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyHowl2">
         <activity
+            android:name=".ReadActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
