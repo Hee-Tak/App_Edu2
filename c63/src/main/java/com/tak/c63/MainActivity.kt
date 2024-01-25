@@ -89,3 +89,46 @@ class MainActivity : AppCompatActivity() {
  * - 해당 컨텐트 프로바이더의 식별자 : com.example.test.provider
  *
  */
+
+
+/**
+ * C63 : Contacts App
+ *
+ * - 주소록 앱을 연동하여 주소록 목록 화면을 띄우기     => Activity  <-- 우리 앱에서 이 액티비티를 실행시켜야되겠네? ==> Intent
+ * - 유저가 선택한 사람의 전화번호 혹은 이메일 정보를 획득  => ContentProvider (주소록 앱의)
+ *          <uses-permission android:name="android.permission.READ_CONTACTS"/>      => Manifest 파일에 등록
+ *
+ * - 주소록의 목록 화면을 띄우기
+ *          val intent = Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
+ *          requestActivity.launch(intent)
+ *
+ * * 우리 앱 입장에서 주소록 앱은 외부 앱이다. => 그래서 암시적 인텐트 사용
+ *
+ *
+ *
+ * - 주소록 앱을 연동하기 위한 URL
+ * - ContactsContract.Contacts.CONTENT_URI : 모든 사람 출력
+ * - ContactsContract.CommonDataKinds.Phone.CONTENT_URI : 전화 번호 정보가 있는 사람만 출력
+ * - ContactsContract.CommonDataKinds.Email.CONTENT_URI : 이메일 정보가 있는 사람만 출력
+ *
+ *
+ * - 컨텐트 프로바이더를 이용해서 데이터를 획득해야하는데..
+ *
+ *      App     --Intent-->        Activity
+ *              <--URL(식별자--
+ *
+ *
+ * - 주소록에서 전달할 결과는 URL 문자열 형태이며, URL 의 맨 마지막 단어(위에서는 1144)가 유저가 선택한 사람의 식별자 값
+ * - 식별자를 조건으로 주소록 앱의 컨텐츠 프로바이더 이용
+ *          val cursor = contentResolver.query(
+ *                              it.data!!.data!!,
+ *                              arrayOf<String>(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER),
+ *                              null,
+ *                              null,
+ *                              null
+ *                          )
+ *
+ */
+
+
+
