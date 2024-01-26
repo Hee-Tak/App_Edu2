@@ -1,12 +1,72 @@
 package com.tak.c63
 
+import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.ContactsContract
+import android.widget.Button
+import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import org.w3c.dom.Text
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val button = findViewById<Button>(R.id.button)
+        val resultView = findViewById<TextView>(R.id.resultView)
+
+        val requestActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()) {
+            val cursor = contentResolver.query(
+                it.data!!.data!!,
+                arrayOf(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                        ContactsContract.CommonDataKinds.Phone.NUMBER),
+                null,
+                null,
+                null
+
+            )
+
+            var name = "none"
+            var phone = "none"
+            if(cursor!!.moveToFirst()){ //이 if문 안으로 들어왔다는 것은 정상적으로 데이터가 뽑혔다는 것
+                name = cursor.getString(0)          //예제에서는 name = cursor?.getString(0) 이긴 했음
+                phone = cursor.getString(1)
+
+            }
+            resultView.text = "name - $name, phone - $phone"
+
+        }
+
+
+        val permissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ){ isGranted ->                         //퍼미션 다이얼로그가 뜬 다음에 실행되는 부분.
+            if(isGranted){                      //다이얼로그 내에서 유저가 퍼미션을 정상적으로 부여했다면. if 안으로 진입하겠네
+                val intent = Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
+                requestActivity.launch(intent)      //인텐트 발생
+            }
+
+        }
+
+
+        button.setOnClickListener {
+            val status = ContextCompat.checkSelfPermission(this, "android.permission.READ_CONTACTS")
+            if(status == PackageManager.PERMISSION_GRANTED){ //정상적이라면, 그러니까 퍼미션이 부여가 돼 있다고 하면.
+                val intent = Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
+                requestActivity.launch(intent)      //인텐트 발생
+
+            } else {
+                permissionLauncher.launch("android.permission.READ_CONTACTS")
+            }
+        }
+
+
     }
 }
 
