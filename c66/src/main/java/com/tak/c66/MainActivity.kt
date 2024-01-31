@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
@@ -41,16 +42,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         var filePath = ""
-        //val fileLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
-        //    ActivityResultContracts.StartActivityForResult()){
-        //    val option = BitmapFactory.Options()
-        //    option.inSampleSize = 3
-        //    val bitmap = BitmapFactory.decodeFile(filePath, option)
-        //    bitmap?.let {
-        //        imageView.setImageBitmap(bitmap)
-        //    }
-        //}
-        val fileLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
+        /*val fileLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()){
+            val option = BitmapFactory.Options()
+            option.inSampleSize = 3
+            val bitmap = BitmapFactory.decodeFile(filePath, option)
+            bitmap?.let {
+                imageView.setImageBitmap(bitmap)
+            }
+        }*/
+        /*val fileLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -80,6 +81,49 @@ class MainActivity : AppCompatActivity() {
                 "com.tak.android.c66.fileprovider",
                 file
             )
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+            fileLauncher.launch(intent)
+        }
+
+
+         */
+        val fileLauncher: ActivityResultLauncher<Intent> = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            try {
+                if (result.resultCode == Activity.RESULT_OK) {
+                    val option = BitmapFactory.Options()
+                    option.inSampleSize = 3
+                    val bitmap = BitmapFactory.decodeFile(filePath, option)
+                    bitmap?.let {
+                        imageView.setImageBitmap(bitmap)
+                    }
+                } else {
+                    // 촬영이나 파일 선택이 취소되었을 때의 처리를 추가할 수 있습니다.
+                    Toast.makeText(this, "취소되었습니다.", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Log.e("MainActivity", "Error in fileLauncher", e)
+            }
+        }
+
+        fileButton.setOnClickListener {
+            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+            val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            val file = File.createTempFile(
+                "JPEG_${timeStamp}_",
+                ".jpg",
+                storageDir
+            )
+            filePath = file.absolutePath
+
+            val uri = FileProvider.getUriForFile(
+                this,
+                "com.tak.android.c66.fileprovider",
+                file
+            )
+
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
             fileLauncher.launch(intent)
