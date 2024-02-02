@@ -44,6 +44,8 @@ class MainActivity : AppCompatActivity() {
             sendBroadcast(intent)
         }
     }
+
+    // 에뮬레이터에서 배터리 조작하는거 확인하려면 에뮬레이터 메뉴에서 ...(more) -> Battery 에서 변경
 }
 
 /**
