@@ -189,5 +189,52 @@ class MainActivity : AppCompatActivity() {
  * C71) startService
  * * startService() 에 의해 서비스를 구동시키는 방법
  *
+ * <startService>
+ * - startService() 함수에 의해 Service가 실행되면 특정 객체가 리턴되지 않는다. (어떠한 특정 객체를 리턴시키지 않는다 는 뜻)
+ * - 상호 데이터를 전달할 직접적인 방법이 없다.
+ * - BroadcastReceiver 를 정의하고 데이터 전달이 필요할 때, 이 BroadcastReceiver 을 실행시키면서 Broadcast Intent 에 Extra 데이터로 전달시키는 방법을 이용
+ *
+ * * 서비스를 구동시키기 위해선 인텐트를 발생시켜 줘야 한다. => startService 함수
+ *
+ *
+ *          Activity
+ *          or Receiver         ----Intent---->  Service
+ *          or another Service  <-----data-----
+ *                                   └ 이건 어떻게?
+ * * IntentExtra 로 데이터를 전달하는 것은, 인텐트를 발생시키는 순간의 데이터를 뜻하는 것.
+ * * 이미 인텐트 발생으로 서비스가 구동이 된 상태에서, 쭉 진행이 되다가, 임의의 발생한 데이터를 어떻게 주고 받을 거냐?
+ *          => 이 때, BroadcastReceiver 를 쓴다는 것임.
+ *          =>  BroadcastReceiver 를 미리 정의해두고, 데이터 전달이 필요할 때, 이 BroadcastReceiver 를 실행시키면서
+ *              Broadcast Intent 에 Extra 데이터로 전달시키는 방법을 이용 (BroadcastReceiver 는 어떤 코드 내에서, 동적 등록이 가능하기 때문)
+ *          => 서비스 <--data--- 액티비티
+ *              서비스내에 리시버(BroadcastReceiver) 를 준비.
+ *              -> 이 서비스를 구동시킨 컴포넌트(Activity, BroadcasrReceiver, Service,....) 에서 데이터를 전달할 일(넘겨줄 일)이 있으면,
+ *              -> 인텐트를 발생시켜서 서비스 내의 브로드캐스트 리시버를 실행시킴
+ *              -> 이 인텐트에 Extra 데이터로 데이터를 전달하는 것.
+ *              -> 리시버가 실행이 되면서 Extra data를 추출해내고, 이것을 활용해서 Service 내부에서 구현하는데에 쓰겠지
+ *
+ *              서비스 --data--> 액티비티
+ *              -> 액티비티 내에 브로드캐스트 리시버를 등록하고 (동적 등록)
+ *              -> 서비스 쪽에서 데이터가 발생한 순간, 인텐트로 브로드캐스트 리시버를 실행시킴
+ *              -> 이때 인텐트에 Extra data로 data를 전달
+ *              -> 액티비티에서 이 data 를 활용.
+ *
+ *
+ *                  <Activity>                                                  <Service>
+ *    [화면]
+ *   ----------
+ *   |        | ←--- BroadcastReceiver  <---------2.Play 정보 전달 --------------- Intent
+ *   |        |                                                                     ↑
+ *   |        |                                                                 MediaPlayer
+ *   |        |                                                                     ↑↑
+ *   |  ㅁㅁㅁ | ==→   Intent ======1. 이벤트 정보 전달 =====================> BroadcastReceiver
+ *   ---------
+ *
+ *
+ *  <실습>
+ * - 음악플레이어.
+ * - 음악이 Service 에서 장기간 재생된다고 가정 -> 실습구간부터 다시
+ *
+ *
  *
  */
