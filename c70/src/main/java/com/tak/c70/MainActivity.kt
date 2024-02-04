@@ -106,33 +106,76 @@ class MainActivity : AppCompatActivity() {
  *                  => 이렇게 할 수 있는 이유 -> 서비스가 화면 출력이 되지 않다 보니까, 매번 요청시에 다른 업무가 다른 데이터로 진행이 된다고 하더라도 얘 내부적인 알고리즘으로 해결할 수가 있기 때문.
  *
  *
+ *                                           <startService() Lifecycle>
  *
- *
- *                                            Call to startService()        //최초의 객체가 생성 (5:25초부터 다시 듣기
+ *                                            Call to startService()        //최초의 객체가 생성
  *                                                      |
  *                                                      |
  *                                                      ↓
- *                                                  onCreate()
-*                                                       |
+ *                                                  onCreate()              //서비스 객체 생성시에 최초의 한 번만 호출되는 함수
+ *                                                      |
  *                                                      |
  *                                                      |
  *                                          ------------------------
-*                                                       |
- *                                                      ↓
- *                                             onStartCommand()
- *                                                      |
  *                                                      |
  *                                                      ↓
- *                                              Service running
+ *                                             onStartCommand()             //인텐트가 다시 or 더 생성되면 onStartCommand() 만 다시 호출이 된다.
+ *                                                      |                   //즉, 얘는 반복호출 가능성이 있다. //그렇다는 얘기는 당연히 이걸 고려해서 코딩해야하고, 아마 주로 여기 위에서 코딩하게 될 것.
  *                                                      |
- *                                                      |   The service is stopped by itself or a client
+ *                                                      ↓
+ *                                              Service running             //서비스 구동 상태 - 백그라운드 업무 장기간동안 진행
+ *                                                      |
+ *                                                      |   The service is stopped by itself or a client (call to stopService())
  *                                                      |
  *                                          ----------------------
-*                                                       |
+ *                                                      |
  *                                                      ↓
  *                                                 onDestroy()
  *                                                      |
  *                                                      ↓
  *                                              Service shut down
+ *
+ *                                               unbounded service
+ *
+ *
+ *
+ *
+ *
+ *                                           <bindService() Lifecycle>              * bind : 두 개의 정보를 서로 연결하는 작업, 결박하다, 포박하다
+ *
+ *                                            Call to bindService()             //서비스 객체 생성
+ *                                                      |
+ *                                                      |
+ *                                                      ↓
+ *                                                  onCreate()                  // 최초 1회만 호출
+ *                                                      |
+ *                                                      |
+ *                                                      |
+ *                                          ------------------------
+ *                                                      |
+ *                                                      ↓
+ *                                                  onBind()                    //반복호출 가능 (인텐트가 여러개 또는 다시 생성됨으로 인해)
+ *                                                      |
+ *                                                      |
+ *                                                      ↓
+ *                                         Clients are bound to service         //서비스 구동 상태
+ *                                                      |
+ *                                                      |
+ *                                                      |    All clients unbind by calling unbindService()
+ *                                                      ↓
+ *                                                  onUnbind()                  //서비스 종료시키기 위한 호출       //마찬가지로 얘도 요청단위로 반복호출 가능 (당연하겠지만 onBind() 가 호출되는 만큼 이라는 뜻)
+ *                                                      |
+ *                                                      ↓
+ *                                          ----------------------
+ *                                                      |
+ *                                                      ↓
+ *                                                 onDestroy()
+ *                                                      |
+ *                                                      ↓
+ *                                              Service shut down
+ *
+ *                                               Bounded service
+ *
+ *
  *
  */
