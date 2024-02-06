@@ -54,5 +54,10 @@ class MainActivity : AppCompatActivity() {
 /**
  * c74) NotificationManager
  *
+ * <Notification.Builder>
+ * - Builder(context: Context!)                         -> API Level 26 (Android 8) 이전 버전
+ * - Builder(context: Context!, channelId: String!)     -> API Level 26 (Android 8) 부터
+ *
+ * * 설정에서 알림 켜줘야 함.
  *
  */
