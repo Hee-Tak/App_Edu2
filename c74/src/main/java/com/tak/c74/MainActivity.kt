@@ -1,12 +1,70 @@
 package com.tak.c74
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.graphics.Color
+import android.media.AudioAttributes
+import android.media.RingtoneManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
+import androidx.core.app.NotificationCompat
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val button = findViewById<Button>(R.id.button)
+
+        button.setOnClickListener {
+            val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            val builder: NotificationCompat.Builder
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){ //오레오버전 이상이라면.
+                //*채널을 만들기 위한 정보를 설정
+                val channelId = "one-channel"
+                val channelName = "My One Channel"
+                val channel = NotificationChannel(
+                    channelId,          //식별자
+                    channelName,        //유저 핸드폰의 환경설정에 이 채널을 설명하기 위해서 나오는 정보
+                    NotificationManager.IMPORTANCE_HIGH
+                )   // 이 채널로 Notification 필드를 만들어 주는것. (매개변수는 채널 정보)
+
+
+                //조금만 더 추가해보자면
+                channel.description = "My Channel One Description"      // 이 채널에 포함되어 있는 Notification이 떴을 때, 환경설정에 나오는 설명
+                channel.setShowBadge(true)              // Badge 아이콘에 Notification 정보가 출력 되게끔 할거냐? 말거냐?
+                val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)  // 음을 함께 플레이
+                val audio = AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_ALARM)
+                    .build()
+                channel.setSound(uri, audio)  //음원과 관련된 정보 설정
+                channel.enableLights(true)
+                channel.lightColor = Color.RED
+                channel.enableVibration(true)       //진동 여부
+                channel.vibrationPattern = longArrayOf(100, 200, 100, 200)  //진동 패턴
+
+                manager.createNotificationChannel(channel)  //만든 channel 을 NotificationManager 에 등록
+                                                            //이 채널로 builder 를 만들어 줘야함.
+
+                builder = NotificationCompat.Builder(this, channelId)
+
+
+            } else {
+                builder = NotificationCompat.Builder(this)
+            }
+
+
+            builder.setSmallIcon(android.R.drawable.ic_notification_overlay)
+            builder.setWhen(System.currentTimeMillis())
+            builder.setContentTitle("Title 타이틀")
+            builder.setContentText("message 메세지 텍스트")
+
+            //띄우기
+            manager.notify(1, builder.build())
+        }
     }
 }
 
@@ -80,7 +138,10 @@ class MainActivity : AppCompatActivity() {
  * * 즉, Notification 에는 정보가 들어가야 한다. -> small Icon, title, when, text
  *
  *
- *              builder.setSmallIcon
+ *              builder.setSmallIcon(android.R.drawable.ic_notification_overlay)
+ *              builder.setWhen(System.currentTimeMillis())
+ *              builder.setContentTitle("Content Title")
+ *              builder.setContentText("Content Massage")
  *
  *
  */
