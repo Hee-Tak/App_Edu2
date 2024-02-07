@@ -59,5 +59,28 @@ class MainActivity : AppCompatActivity() {
  * - Builder(context: Context!, channelId: String!)     -> API Level 26 (Android 8) 부터
  *
  * * 설정에서 알림 켜줘야 함.
+ * * Notification 받는 거를 구분해서 유저가 조정할 수 있게끔 하겠다는 개념 => 채널 개념
+ *
+ *
+ *
+ * <NotificationChannel>
+ *
+ * - NotificationChannel(id: String!, name: CharSequence!, importance: Int)
+ *
+ * - NotificationManager.IMPORTANCE_HIGH    -> 긴급 상황이며, 알림음이 울리며, 헤드업으로 표시    *헤드업? -> 배너 비슷하게 뜨는걸 얘기하는 것 같음
+ * - NotificationManager.IMPORTANCE_DEFAULT -> 높은 중요도이며, 알림음이 울림.
+ * - NotificationManager.IMPORTANCE_LOW     -> 중간 중요도이며, 알림음이 울리지 않음.
+ * - NotificationManager.IMPORTANCE_MIN     -> 낮은 중요도이며, 알림음이 없고, 상태표시줄에 표시되지 않음.
+ *
+ *
+ *
+ * <Notification>
+ * - Notification 은 알림에 출력될 이미지, 문자열 등의 정보를 담는 객체
+ *
+ * * 즉, Notification 에는 정보가 들어가야 한다. -> small Icon, title, when, text
+ *
+ *
+ *              builder.setSmallIcon
+ *
  *
  */
