@@ -77,5 +77,33 @@ class MainActivity : AppCompatActivity() {
  */
 
 /**
+ *  <Progress>
  *
+ * - 알림을 이용해 일의 진행 상황
+ * * 프로그레스바 를 칠해주는 경우 (ex-파일 업로드 진행 상황)
+ *
+ *          builder.setProgress(100, 0, false)          //max : 100 , 초깃값 : 0 => 즉 이 상태는 아무것도 칠해지지 않은 프로그레스바
+ *          manager.notify(11, builder.build())
+ *
+ *          thread {
+ *              for(i in 1..100){
+ *                  builder.setProgress(100, i, false)
+ *                  manager.notify(11, builder.build())
+ *                  SystemClock.sleep(100)
+ *              }
+ *          }
+ */
+
+
+/**
+ * <Style>
+ *
+ * - BigPictureStyle, BigTextStyle, InboxStyle, MessageStyle
+ *
+ * * 타이틀 문자열과 텍스트 문자열 이외에, 다양한 스타일 추가 가능. 버전이 업 되면서 이 스타일들이 계속 추가가 됨.
+ *
+ *          val bigPicture = BitmapFactory.decodeResource(resources, R.drawable.logo_1)
+ *          val bigStyle = NotificationCompat.BigPictureStyle()         //빅픽쳐스타일 생성
+ *          bigStyle.bigPicture(bigPicture)                         //정보 전달
+ *          builder.setStyle(bigStyle)                              // set
  */
