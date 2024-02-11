@@ -52,4 +52,25 @@ class MainActivity : AppCompatActivity() {
  * <Broadcast Limit>
  * - 브로드캐스트 리시버를 실행시키기 위해서는 인텐트를 sendBroadcast() 함수로 발생시킨다.
  * - 브로드캐스트 리시버를 암시적 인텐트에 의해 실행 시키는 것 금지.
+ *
+ * * 브로드캐스트 리시버에 제약이 가해졌다 하더라도, 우리 개발 코드에 전혀 문제가 발생하지 않을 것으로 보임.
+ * * 다른 방법으로 얼마든지 실행시킬 수가 있다.
+ *
+ *          <receiver
+ *              android:name=".MyReceiver"
+ *              android:enabled="true"
+ *              android:exported="true">
+ *              <intent-filter>
+ *                  <action android:name="ACTION_RECEIVER/>
+ *              </intent-filter>
+ *          </receiver>
+ *
+ *
+ *          val intent = Intent("ACTION_RECEIVER")
+ *          sendBroadcast(intent)
+ *
+ *
+ *
+ *
+ *
  */
