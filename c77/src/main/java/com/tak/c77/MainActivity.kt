@@ -81,6 +81,25 @@ class MainActivity : AppCompatActivity() {
  *
  *
  *
- * - 암시적 인텐트를 발생시키면 브로드캐스트 리시버는 실행되지 않고 에러가 발생
+ * - 암시적 인텐트를 발생시키면 브로드캐스트 리시버는 실행되지 않고 에러가 발생 (내부에서 암시적 인텐트를 발생시킬 때의 이야기)
+ *
+ *          Background execution not allowed: receiving Intent { act=ACTION_RECEIVER flg=0x10 } to com.example.test
+ *
+ *
+ *
+ * - AndroidManifest.xml 파일에 등록된 리시버를 암시적 인텐트로 실행시키는 경우 금지
+ * - 명시적으로 실행시키는 것은 가능
+ * - 코드에서 registerReceiver() 로 등록시킨 경우에는 암시적 인텐트에 실행 가능 (동적 등록으로 암시적 인텐트를 실행할 경우에는 가능)
+ *
+ *          receiver = object : BroadcastReceiver() {
+ *              override fun onReceive(context: Context?, intent: Intent?) {
+ *                  Log.d("tak", "outer app dynamic receiver..........")
+ *              }
+ *          }
+ *
+ *          registerReceiver(receiver, IntentFilter("ACTION_OUTER_DYNAMIC_RECEIVER"))       //receiver 객체를 등록한거니까. 인텐트 필터 정보를 줄 수 밖에 없고, 암시적 인텐트로 발생시키는 것.
+ *
  *
  */
+
+
