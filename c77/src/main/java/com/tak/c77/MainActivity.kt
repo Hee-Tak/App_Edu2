@@ -102,4 +102,12 @@ class MainActivity : AppCompatActivity() {
  *
  */
 
+/**
+ * 78강 : Service Limit
+ *
+ * <Service Limit>
+ *
+ * - 앱이 백그라운드 상태에 있을 때 서비스를 실행시키기 위해서 인텐트를 발생시키면 에러 발생
+ * - 앱이 포그라운드 상황이라면 정상 실행
+ */
 
