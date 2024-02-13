@@ -60,15 +60,27 @@ class MainActivity : AppCompatActivity() {
  *              android:name=".MyReceiver"
  *              android:enabled="true"
  *              android:exported="true">
- *              <intent-filter>
+ *              <intent-filter>                                 //이렇게 돼 있더라도 ㄱㅊ. 내부에서는 위의 클래스명 정보로 실행(명시적), 외부에서는 인텐트필터 정보로 실행(암시적)
  *                  <action android:name="ACTION_RECEIVER/>
- *              </intent-filter>
+ *              </intent-filter>                                //인텐트 필터를 등록했다는 것은, 암시적으로 브로드캐스트 리시버가 실행이 가능하게 설정한 것.
  *          </receiver>
  *
  *
- *          val intent = Intent("ACTION_RECEIVER")
- *          sendBroadcast(intent)
+ *          val intent = Intent("ACTION_RECEIVER")          //<-- 클래스명 정보를 준게 아니니까 암시적 인텐트
+ *          sendBroadcast(intent)                           //백그라운드 제약때문에 암식적으로 실행이 불가.
+ *
+ * * 여기서, 암시적으로 실행한게 문제가 되지 않는 이유
+ *      -> 위의 코드들을 하나의 App 으로 보고, 그리고 다른 App 이 있다고 생각하자.
+ *      -> App 내에 다른 어떤 액티비티가 있고, 이 액티비티가 암시적 인텐트로 인텐트 발생시켜서 할 경우에는 브로드캐스트 리시버가 실행이 안됨.
+ *      -> 그런데, 외부 App 에서, 외부 앱에 의해서 인텐트 발생인데, 이 인텐트가 암시적 인텐트면, 이건 잘 실행이 됨.
+ *      -> 그럴 수 밖에 없는게, 외부 앱에서 만약에 내부 App 쪽에 브로드캐스트 리시버를 실행시키겠다고 하면 명시적으로 할 수가 없기 때문.
+ *      -> 그래서 인텐트 필터 등록하고, 인텐트 필터 정보를 맞춰서 하는 것.
+ *
+ *      => 결론 : 암시적 인텐트에 의해서 실행이 안된다 라고 하는 것은, 내부에서 암시적 인텐트에 의해서 실행이 못되게끔 막은 것을 말하는 것.
+ *      => 그리고, 내부에서는 클래스명 정보가 있기 때문에 ㄱㅊㄱㅊ 명시적으로 가면 됨.
  *
  *
+ *
+ * - 암시적 인텐트를 발생시키면 브로드캐스트 리시버는 실행되지 않고 에러가 발생
  *
  */
