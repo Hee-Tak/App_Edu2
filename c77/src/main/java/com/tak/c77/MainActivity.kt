@@ -109,5 +109,9 @@ class MainActivity : AppCompatActivity() {
  *
  * - 앱이 백그라운드 상태에 있을 때 서비스를 실행시키기 위해서 인텐트를 발생시키면 에러 발생
  * - 앱이 포그라운드 상황이라면 정상 실행
+ *
+ *          Not allowed to start service Intent { act=ACTION_OUTER_SERVICE pkg=com.example.test }: app is in background uid null
+ *
+ *
  */
 
