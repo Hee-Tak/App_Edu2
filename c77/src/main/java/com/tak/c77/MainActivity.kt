@@ -185,4 +185,107 @@ class MainActivity : AppCompatActivity() {
 
 /**
  * 79강 JobScheduler
+ *
+ * * 안드로이드 시스템에서 백그라운드 제약이 가해지기 시작하면서, 어플리케이션이 백그라운드 상황에 있을 때, 업무 처리가 필요한 경우도 분명히 있을 것.
+ *      이런 경우에 JobScheduler 를 이용할 수도 있다. (모든 경우x. 특정 조건에 따라O) (특정 조건에 따라, 백그라운드 업무 처리를 위한 클래스 JobScheduler)
+ *
+ *
+ * <JobScheduler>
+ *
+ * * JobScheduler 도 일단은 서비스이다. (작성 방법에 있어서 일반적인 다른 서비스와는 차이가 있지만 어쨌던 서비스) (매니페스트 파일에 등록시켜줘야함)
+ * * 일반적인 Service 같은 경우에는, 어디에선가 구동을 시키려면 인텐트를 발생시켜줘야 하는데
+ * * JobScheduler 는 시스템에 등록을 하면, 시스템에서 특정상황이 됐을 때 실행시켜준다는 개념.
+ *
+ * - JobScheduler 을 이용하면 앱이 백그라운드 상황에서도 업무처리 가능
+ * - 조건을 명시하고 그 조건에 맞는 경우에만 백그라운드 업무 처리 가능
+ *      * 네트워크 타입
+ *      * 배터리 충전 상태
+ *      * 특정 앱의 콘텐츠 프로바이더의 갱신
+ *
+ *      * 실행 주기         (한시간에 한번씩 같은 식으로)
+ *      * 최소 지연 시간      (delay)                         => 이러한 조건들에 충족하면, 시스템에 의해서 JobScheduler 가 실행이 된다.
+ *
+ *
+ * <JobService>
+ *
+ * - 개발자 서비스 (개발자가 만드는 서비스) (서비스로 등록해야 함)
+ * - android.permission.BIND_JOB_SERVICE 퍼미션이 등록되어야 함
+ *
+ *              <service
+ *                  android:name=".MyService"
+ *                  android:enabled="true"
+ *                  android:exported="true"
+ *                  android:permission="android.permission.BIND_JOB_SERVICE"></service>
+ *
+ *
+ *              @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+ *              class MyService : JobService() {            //JobServcie 를 상속받는 Service (일반 서비스가 아니라. 잡서비스를 상속받음)
+ *                                                          //onStartCommand 같은 경우에는 override 해서 작성은 가능하나. 호출이 안되기 때문에 의미가 없음.
+ *                  override fun onCreate() {
+ *                      super.onCreate()
+ *                  }
+ *
+ *                  override fun onDestroy() {
+ *                      super.onDestroy()
+ *                  }
+ *
+ *                  //아래의 두 함수가 중요. 시스템에 의해서 구동이 될 때 이 함수들이 자동으로 콜이 된다.
+ *                  override fun onStartJob(params: JobParameters?): Boolean { //일반적으로 백그라운드에서 진행돼야 되는 업무로직은 onStartJob에서 구현할 것.
+ *                      return false                                            //return 값이 true 냐 false 냐에 따라 동작이 달라진다.
+ *                  }
+ *
+ *                  override fun onStopJob(params: JobParameters?): Boolean {
+ *                      return false
+ *                  }
+ *
+ *              }
+ *
+ * - onStartJob() 이 백그라운드에서 처리되어야 하는 업무를 가지는 함수
+ * - 리턴값에 따라 다르게 동작
+ * - false : Job 이 완벽하게 종료되었다는 의미   //이를 시스템에 알려주는 것임. //이 경우에는 onStopJob() 이 호출되지 않겠지. (완벽하게 Job이 끝났다는 의미이기 때문에 더이상 처리할 게 없다 보니까 호출이 안되는 것)
+ * - true : Job 이 아직 끝나지 않았음을 의미    //이 경우에는 종료되긴 했으나, 아직 완벽하게 끝나지 않았다는 의미 => onStopJob() 을 call 해줌. => 마지막에 뭔가 처리해야 될 것을 처리해 달라는 의미가 된다.
+ *                                          //true는 보통, 내가 실행되어야 될 어떤 조건이 갑자기 바뀌었다, 이 JobService를 등록시킨 조건이 갑자기 변경이 됐다. 그래서 종료가 된다. 이럴 경우, 나는 아직 처리가 안된것아니냐. => true
+ *                                          //혹은 어디선가 cancel 시켜버렸다. 아직 처리가 안된 상태지 않느냐 => true . 이런식이다.
+ *
+ *
+ * - onStopJob() 의 리턴값도 true, false 에 따라 다르게 동작
+ * - false : JobScheduler 등록이 취소        //이 onStopJob 까지 호출이 됐다만, 이 JobServcie 를 실행시킨 조건을 JobScheduler 에게 등록을 취소하는 것. 더 이상 실현될 필요 없다. 이런 의미
+ * - true : 다시 JobScheduler 등록          // 다시 등록한다.
+ *
+ *
+ *
+ * * 그러면, JobScheduler 를 만든 다음에, 시스템에 등록시켜야 되는데 등록시키는 조건은?
+ * * 그 조건을 담는 게 JobInfo 다.
+ *
+ *
+ * <JobInfo>
+ *
+ * - 실행되는 조건을 JobInfo 객체에 담아 시스템에 등록
+ *
+ *              JobInfo.Builder(1, ComponentName(this, MyService::class.java)).run {
+ *                  setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)  //=> 이러한 setter 함수로 조건을 주는것. 이 예제에서는 네트워크 타입 정보를 줬음. UNMETERED -> 와이파이 정보 (핸드폰이 와이파이에 붙는 순간, 실행시켜 달라는 조건이라 보면 됨)
+ *                  jobScheduler?.schedule(build())                 // 이렇게 조건을 JobInfo로 준 다음에, JobScheduler 객체에 schedule 라는 함수로 등록하면, 우리가 만들어놓은 이 JobService 가 특정 조건이 됐을 때 실행된다는 구조.
+ *              }
+ *
+ *              //그렇담 여기서는, 핸드폰이 와이파이에 붙는 순간, 이 JobService 는 실행되게 됨.
+ *
+ *
+ * * 여기에다가 뭔가 실행돼야 될 조건을 등록해서 시스템에 알려주는 것.
+ * * 그래서 JobInfo 를 빌더 객체가 만드는 것
+ * * 여기에 들어가야되는 정보는? => 어떤 JobService 냐? => 이 JobService(MyService) 를 실행시키는 거다. 당연히 JobService 에 대한 정보는 들어가줘야 하는 것.
+ * * 이 JobService 를 시스템에서 실행시켜준다는 것.
+ *
+ *
+ *
+ * * setter 함수들.
+ *
+ * - setPersisted (true)                                : 단말을 재부팅 해도 Job 등록 유지해야 하는지 설정. (원래는 재부팅하면 다시 등록해줘야 함.)
+ * - setPeriodic (long intervalMillis)                  : Job 의 실행 주기 설정.
+ * - setMinimumLatency (long minLatencyMillis)          : Job 의 실행의 지연 시간 설정.
+ * - setOverrideDeadline (long maxExecutionDelayMillis) : 다른 조건이 만족하지 않는다고 하더라도 이 시간 안에 Job 이 실행되어야 함을 설정. (조건이 맞지 않더라도 최소 한시간에 한번은 설정되어야한다. 이런 느낌)
+ * - setRequiredNetworkType (int networkType)           : 네트웍 타입 설정.                (폰이 이동사망에 붙어있는가, 와이파이에 붙어있는가)
+ * - setRequiresBatteryNotLow (boolean batteryNotLow)   : 배터리가 낮은 상태가 아님을 설정.
+ * - setRequiresCharging (boolean requiresCharging)     : 배터리가 충전 상태인지를 설정.
+ *
+ *
  */
