@@ -74,3 +74,12 @@ class MainActivity : AppCompatActivity() {
  *
  *
  */
+
+/**
+ * c81) LocationManager
+ *
+ * <LocationManager>
+ *
+ * - 플랫폼 API 에서 제공되는 시스템 서비스
+ *          val manager = getSystemService(LOCATION_SERVICE) as LocationManager
+ */
