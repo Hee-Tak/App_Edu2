@@ -80,6 +80,22 @@ class MainActivity : AppCompatActivity() {
  *
  * <LocationManager>
  *
- * - 플랫폼 API 에서 제공되는 시스템 서비스
+ * - 플랫폼 API 에서 제공되는 시스템 서비스 (표준 API)  => 그렇기에, 특별하게 라이브러리 dependency 관계 설정할 필요도 없고, API 레벨 1 버전부터 제공이 돼서 지금까지 변경된 적이 없다.
+ *
  *          val manager = getSystemService(LOCATION_SERVICE) as LocationManager
+ *
+ * - 위치 정보 획득은 LocationManager 의 getLastKnownLocation() 함수를 이용
+ *
+ *          val location: Location? = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER) //LocationManager.GPS_PROVIDER : GPS 프로바이더를 이용하여 위치값을 획득. 로케이션 프로바이더
+ *          // 그러나 GPS 프로바이더를 이용할 수 없는 상황에서는 위치 값 획득이 안된다는 것. (EX-지하철내부, 건물내부) -> 그래서 추후에는 이 매개변수 부분을 복잡하게 지정해줘야할 수도 있다.
+ *          // Location 객체타입으로 전달이 되는데, 일종의 VO 객체. (정보가 들어가 있는 객체)
+ *
+ * - 결과값은 Location 객체로 전달
+ * - getAccuracy()  : 정확도
+ * - getLatitude()  : 위도
+ * - getLongitude() : 경도
+ * - getTime()      : 획득 시간
+ *
+ *
+ *
  */
