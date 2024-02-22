@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity() {
  *
  * - 지속적으로 위치를 획득해야 한다면 LocationListener 를 이용
  *
- *          val listener: LocationListener = object : LocationListener {
+ *          val listener: LocationListener = object : LocationListener { //object means 객체
  *              override fun onLocationChanged(location: Location) {
  *                  TODO("Not yet implemented")
  *              }
@@ -112,13 +112,14 @@ class MainActivity : AppCompatActivity() {
  *                  super.onProviderEnabled(provider)
  *              }
  *          }
- *
- *          manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10_000L, 10f, listener)
+ *                                                                        시간    오차범위 (미터단위)
+ *          manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10_000L, 10f, listener)        //requestLocationUpdates 를 이용해서 매개변수 listener 에 전달. 그럼 매개변수 listener에게 반복적으로 함수 호출하면서 위치 값을 제공 해 줌.
+ *          //위의 Location Provider (GPS_PROVIDER) 가 갑자기 이용 불가능한 상황이 될 수도 있다. -> 이때 onProviderDisabled 호출. -> 다시 이용가능해지면 onProviderEnabled
  *
  *          //.....
  *
  *
- *          manager.removeUpdates(listener)
+ *          manager.removeUpdates(listener)         // 더이상 위치값을 안받겠다.
  *
  *
  *
