@@ -90,11 +90,36 @@ class MainActivity : AppCompatActivity() {
  *          // 그러나 GPS 프로바이더를 이용할 수 없는 상황에서는 위치 값 획득이 안된다는 것. (EX-지하철내부, 건물내부) -> 그래서 추후에는 이 매개변수 부분을 복잡하게 지정해줘야할 수도 있다.
  *          // Location 객체타입으로 전달이 되는데, 일종의 VO 객체. (정보가 들어가 있는 객체)
  *
- * - 결과값은 Location 객체로 전달
- * - getAccuracy()  : 정확도
- * - getLatitude()  : 위도
- * - getLongitude() : 경도
+ * - 결과값은 Location 객체로 전달       그 다음, 온갖 get 함수로 뽑아내면 된다.
+ * - getAccuracy()  : 정확도       -> 오차범위를 뜻함.
+ * - getLatitude()  : 위도        -> 실수 값
+ * - getLongitude() : 경도        -> 실수 값
  * - getTime()      : 획득 시간
+ *
+ *
+ * - 지속적으로 위치를 획득해야 한다면 LocationListener 를 이용
+ *
+ *          val listener: LocationListener = object : LocationListener {
+ *              override fun onLocationChanged(location: Location) {
+ *                  TODO("Not yet implemented")
+ *              }
+ *
+ *              override fun onProviderDisabled(provider: String) {
+ *                  super.onProviderDisabled(provider)
+ *              }
+ *
+ *              override fun onProviderEnabled(provider: String) {
+ *                  super.onProviderEnabled(provider)
+ *              }
+ *          }
+ *
+ *          manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10_000L, 10f, listener)
+ *
+ *          //.....
+ *
+ *
+ *          manager.removeUpdates(listener)
+ *
  *
  *
  *
