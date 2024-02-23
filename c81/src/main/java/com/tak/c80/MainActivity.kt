@@ -1,12 +1,73 @@
 package com.tak.c80
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 
 class MainActivity : AppCompatActivity() {
+
+    lateinit var resultView: TextView
+    lateinit var manager: LocationManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        resultView = findViewById(R.id.resultView)
+        manager = getSystemService(LOCATION_SERVICE) as LocationManager
+
+        val launcher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted ->
+            if(isGranted){
+                getLocation()
+            } else {
+                Toast.makeText(this, "denied..",  Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        val status = ContextCompat.checkSelfPermission(this,
+            "android.permission.ACCESS_FINE_LOCATION")
+        if(status == PackageManager.PERMISSION_GRANTED){
+            getLocation()
+        } else {
+            launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION) //android 쪽 Manifest
+        }
+    }
+
+    fun getLocation() {
+        val location = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER) //지금 현재로썬 이 함수 내에서는 권한부여(permission 쪽)이 안돼있어서 빨간줄 뜨는것. 어차피 위에 코드쪽 가면 뜸
+
+        //location?.let {//이 블록에 들어왔다는 것은, null이 아니라는 것.
+        //    val latitude = location.latitude //위도
+        //    val longitude = location.longitude //경도
+        //    val accuracy = location.accuracy
+        //    val time = location.time
+        //
+        //    resultView.text = " 위도: $latitude \n 경도: $longitude \n 오차범위: $accuracy \n 시각: $time \t location: $location"
+        //}
+
+        if(location != null) {
+            updateLocationInfo(location)
+        } else {
+            resultView.text = "위치 정보를 가져올 수 없습니다."
+        }
+
+    }
+
+    private fun updateLocationInfo(location: Location) {
+        val latitude = location.latitude //위도
+        val longitude = location.longitude //경도
+        val accuracy = location.accuracy
+        val time = location.time
+
+        resultView.text = " 위도: $latitude \n 경도: $longitude \n 오차범위: $accuracy \n 시각: $time \t location: $location"
     }
 }
 
