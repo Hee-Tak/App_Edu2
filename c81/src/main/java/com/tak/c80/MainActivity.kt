@@ -1,11 +1,13 @@
 package com.tak.c80
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -39,6 +41,16 @@ class MainActivity : AppCompatActivity() {
         } else {
             launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION) //android 쪽 Manifest
         }
+
+        val next = findViewById<Button>(R.id.nextButton)
+        next.setOnClickListener {
+            val intent = Intent(this, MainActivity2::class.java)
+            startActivity(intent)
+        }
+
+
+
+
     }
 
     fun getLocation() {
