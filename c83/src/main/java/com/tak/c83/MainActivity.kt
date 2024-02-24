@@ -137,3 +137,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
  *
  *
  */
+
+
+/**
+ * 결국에 파일들을 체크할 때,
+ * Manifest 파일, Activity 등의 컴포넌트파일들, xml 파일, build.gradle 까지 확인해주는게 좋다는거지
+ */
